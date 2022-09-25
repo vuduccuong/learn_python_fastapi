@@ -13,7 +13,13 @@ from TodoApp.routers.auth import get_current_user, get_user_exception
 
 
 models.Base.metadata.create_all(bind=engine)
-router = APIRouter()
+router = APIRouter(
+    prefix="/todos",
+    tags=["Todo"],
+    responses={
+        status.HTTP_404_NOT_FOUND: {"description": "Not found"},
+    },
+)
 
 
 def get_db():
@@ -26,7 +32,7 @@ def get_db():
         db.close()
 
 
-@router.get("/todos")
+@router.get("/")
 async def root(
     title: Optional[str] = None,
     owner_id: Optional[int] = None,
@@ -41,7 +47,7 @@ async def root(
     return query.all()
 
 
-@router.get("/todos/user")
+@router.get("/user")
 async def get_all_by_user(
     user: dict = Depends(get_current_user), db: Session = Depends(get_db)
 ):
@@ -53,7 +59,7 @@ async def get_all_by_user(
     )
 
 
-@router.get("/todos/{todo_id}")
+@router.get("/{todo_id}")
 async def get_single(
     todo_id: int, user: dict = Depends(get_current_user), db: Session = Depends(get_db)
 ):
@@ -77,7 +83,7 @@ async def get_single(
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Todo not found!")
 
 
-@router.post("/todos")
+@router.post("/")
 async def create(
     todo: TodoViewModel,
     user: dict = Depends(get_current_user),
@@ -103,7 +109,7 @@ async def create(
     return {"success": True}
 
 
-@router.put("/todos/{todo_id}")
+@router.put("/{todo_id}")
 async def update(
     todo_id: int,
     todo: TodoViewModel,
@@ -133,7 +139,7 @@ async def update(
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Todo not found!")
 
 
-@router.delete("/todos/{todo_id}")
+@router.delete("/{todo_id}")
 async def delete(
     todo_id: int, user: dict = Depends(get_current_user), db: Session = Depends(get_db)
 ):

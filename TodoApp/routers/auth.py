@@ -22,7 +22,13 @@ ALGORITHM = "HS256"
 
 models.Base.metadata.create_all(bind=engine)
 
-router = APIRouter()
+router = APIRouter(
+    prefix="/users",
+    tags=["Auth"],
+    responses={
+        status.HTTP_401_UNAUTHORIZED: {"user": "Not authorized"},
+    },
+)
 
 
 def get_db():
@@ -98,7 +104,7 @@ async def get_current_user(token: str = Depends(oauth2_bearer)):
         raise token_exception()
 
 
-@router.post("/users", status_code=status.HTTP_201_CREATED)
+@router.post("/", status_code=status.HTTP_201_CREATED)
 async def create_new_user(
     create_user: CreateUserViewModel, db: Session = Depends(get_db)
 ):
