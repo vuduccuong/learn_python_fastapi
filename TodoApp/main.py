@@ -7,10 +7,13 @@ from sqlalchemy.orm import Session
 
 from TodoApp import models
 from TodoApp.ViewModels.todo import TodoViewModel
-from TodoApp.auth import get_current_user, get_user_exception
+from TodoApp.routers.auth import get_current_user, get_user_exception
 from TodoApp.database import engine, SessionLocal
 
+from TodoApp.routers import auth
+
 app = FastAPI()
+app.include_router(auth.router)
 
 models.Base.metadata.create_all(bind=engine)
 

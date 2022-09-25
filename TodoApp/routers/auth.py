@@ -1,10 +1,9 @@
 #  author = "Vũ Đức Cường"
-#  date = 9/25/22, 12:46 PM
+#  date = 9/25/22, 5:14 PM
+
 from typing import Optional
 
-from fastapi import FastAPI, Depends, HTTPException
-from pydantic import BaseModel
-from requests import Session
+from fastapi import Depends, HTTPException, APIRouter
 from sqlalchemy.orm import Session
 from passlib.context import CryptContext
 from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
@@ -23,7 +22,7 @@ ALGORITHM = "HS256"
 
 models.Base.metadata.create_all(bind=engine)
 
-app = FastAPI()
+router = APIRouter()
 
 
 def get_db():
@@ -99,7 +98,7 @@ async def get_current_user(token: str = Depends(oauth2_bearer)):
         raise token_exception()
 
 
-@app.post("/users", status_code=status.HTTP_201_CREATED)
+@router.post("/users", status_code=status.HTTP_201_CREATED)
 async def create_new_user(
     create_user: CreateUserViewModel, db: Session = Depends(get_db)
 ):
@@ -116,7 +115,7 @@ async def create_new_user(
     return user_entity
 
 
-@app.post("/token")
+@router.post("/token")
 async def login_for_access_token(
     form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)
 ):
