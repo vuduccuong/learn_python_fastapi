@@ -75,7 +75,7 @@ def authenticate_user(username: str, password: str, db: Session):
     return user
 
 
-oauth2_bearer = OAuth2PasswordBearer(tokenUrl="token")
+oauth2_bearer = OAuth2PasswordBearer(tokenUrl="users/token")
 
 
 def create_access_token(user: models.User, exprires_delta: Optional[timedelta] = None):
@@ -133,4 +133,7 @@ async def login_for_access_token(
     if not user:
         raise get_user_exception()
 
-    return {"jwt_token": create_access_token(user=user)}
+    return {
+        "access_token": create_access_token(user=user),
+        "token_type": "bearer",
+    }
