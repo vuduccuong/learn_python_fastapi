@@ -38,12 +38,13 @@ def get_db():
 
 
 @router.get("/test")
-async def test(request: Request):
+async def test(request: Request, db: Session = Depends(get_db)):
+    todos = db.query(models.Todo).all()
     return templates.TemplateResponse(
         name="home.html",
         context={
             "request": request,
-            "a": "hello",
+            "todos": todos,
         },
     )
 
