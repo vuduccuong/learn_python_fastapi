@@ -2,7 +2,9 @@
 #  date = 9/25/22, 5:21 PM
 from typing import Optional
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi.responses import HTMLResponse
+from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
 from starlette import status
 
@@ -14,6 +16,8 @@ from routers.auth import get_current_user
 
 
 models.Base.metadata.create_all(bind=engine)
+templates = Jinja2Templates(directory="templates")
+
 router = APIRouter(
     prefix="/todos",
     tags=["Todo"],
@@ -31,6 +35,16 @@ def get_db():
         print(ex)
     finally:
         db.close()
+
+
+@router.get("/test")
+async def test(request: Request):
+    return templates.TemplateResponse(
+        "home.html",
+        {
+            "request": request,
+        },
+    )
 
 
 @router.get("/")
