@@ -40,9 +40,10 @@ def get_db():
 @router.get("/test")
 async def test(request: Request):
     return templates.TemplateResponse(
-        "home.html",
-        {
+        name="home.html",
+        context={
             "request": request,
+            "a": "hello",
         },
     )
 
