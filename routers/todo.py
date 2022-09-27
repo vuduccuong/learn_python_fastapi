@@ -6,10 +6,11 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from starlette import status
 
-import TodoApp.models as models
-from TodoApp.ViewModels.todo import TodoViewModel
-from TodoApp.database import SessionLocal, engine
-from TodoApp.routers.auth import get_current_user, get_user_exception
+import models
+from ViewModels.todo import TodoViewModel
+from database import SessionLocal, engine
+from exceptions.user import get_user_exception
+from routers.auth import get_current_user
 
 
 models.Base.metadata.create_all(bind=engine)

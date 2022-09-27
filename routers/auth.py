@@ -11,10 +11,11 @@ from starlette import status
 from jose import jwt, JWTError
 from datetime import datetime, timedelta
 
-from TodoApp import models
-from TodoApp.ViewModels.todo import CreateUserViewModel
-from TodoApp.database import engine, SessionLocal
-
+import models
+from ViewModels.todo import CreateUserViewModel
+from database import engine, SessionLocal
+from exceptions.token import token_exception
+from exceptions.user import get_user_exception
 
 bcrypt_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 SECRET_KEY = "Thasdjal;sfhjkwh3lkasjlk;asdkjasdkjh"
@@ -47,22 +48,6 @@ def get_password_hash(password):
 
 def verify_password(plain_password, hashed_password):
     return bcrypt_context.verify(plain_password, hashed_password)
-
-
-def get_user_exception():
-    return HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Could not validate credentials",
-        headers={"WWW-Authenticate": "Bearer"},
-    )
-
-
-def token_exception():
-    return HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Incorrent username or password",
-        headers={"WWW-Authenticate": "Bearer"},
-    )
 
 
 def authenticate_user(username: str, password: str, db: Session):
